@@ -1,0 +1,513 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
+/* For WebKit browsers (e.g., Chrome, Safari) */
+::-webkit-scrollbar {
+  width: 4px !important;
+  border-radius: 10px !important;
+  background: #635FC7 !important;
+  /* Set the width of the scrollbar */
+}
+
+/* For WebKit browsers (e.g., Chrome, Safari) */
+::-webkit-scrollbar-thumb {
+  background: #635FC7 !important;
+  /* Set the color of the scrollbar thumb */
+}
+
+/* For Firefox */
+/* Note: Firefox does not support styling scrollbar directly with CSS.
+ However, you can use -moz-scrollbar to target it. */
+* {
+  scrollbar-width: thin !important;
+  /* Set the width of the scrollbar */
+}
+
+*::-moz-scrollbar-thumb {
+  background: #635FC7 !important;
+  /* Set the color of the scrollbar thumb */
+}
+
+:root {
+  --light-dark: #2b2c37;
+  --dark: #20212C;
+  --grey: #828FA3;
+  --purple: #635FC7;
+  --purple-hover: #a8a4ff;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--dark);
+}
+
+.feather {
+  width: 16px;
+  height: 16px;
+  vertical-align: text-bottom;
+}
+
+/*
+   * Sidebar
+   */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  /* rtl:raw:
+    right: 0;
+    */
+  bottom: 0;
+  /* rtl:remove */
+  left: 0;
+  z-index: 100;
+  /* Behind the navbar */
+  padding: 48px 0 0;
+  /* Height of navbar */
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+}
+
+@media (max-width: 767.98px) {
+  .sidebar {
+    top: 5rem;
+  }
+}
+
+.sidebar-sticky {
+  position: relative;
+  top: 0;
+  height: calc(100vh - 48px);
+  padding-top: .5rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  /* Scrollable contents if viewport is shorter than content. */
+}
+
+.sidebar .nav-link {
+  font-weight: 500;
+  color: #333;
+}
+
+.sidebar .nav-link .feather {
+  margin-right: 4px;
+  color: #727272;
+}
+
+.sidebar .nav-link.active {
+  color: #2470dc;
+}
+
+.sidebar .nav-link:hover .feather,
+.sidebar .nav-link.active .feather {
+  color: inherit;
+}
+
+.sidebar-heading {
+  font-size: .75rem;
+  text-transform: uppercase;
+}
+
+/*
+   * Navbar
+   */
+
+.navbar-brand {
+  padding-top: .75rem;
+  padding-bottom: .75rem;
+  font-size: 1.5rem;
+}
+
+.navbar .navbar-toggler {
+  top: .25rem;
+  right: 1rem;
+}
+
+.navbar .form-control {
+  padding: .75rem 1rem;
+  border-width: 0;
+  border-radius: 0;
+}
+
+.form-control-dark {
+  color: #fff;
+  background-color: rgba(255, 255, 255, .1);
+  border-color: rgba(255, 255, 255, .1);
+}
+
+.form-control-dark:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
+}
+
+.navbar,
+.sidebar {
+  background-color: var(--light-dark) !important;
+}
+
+main {
+  color: var(--grey);
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--grey) !important;
+  font-size: 15px;
+  font-weight: 600 !important;
+  fill: var(--grey);
+  padding-left: 30px;
+  border-radius: 0 999px 999px 0;
+}
+
+.nav-link svg {
+  fill: inherit;
+}
+
+.nav-link.active {
+  background-color: var(--purple);
+  color: #fff !important;
+  fill: #fff;
+}
+
+.nav-link:hover {
+  background-color: #fff;
+  color: var(--purple) !important;
+  fill: var(--purple);
+}
+
+.nav {
+  padding-right: 20px;
+}
+
+.nav-link i {
+  font-size: 16px;
+}
+
+.add-link,
+.add-link:hover {
+  color: var(--purple) !important;
+  fill: var(--purple) !important;
+  background-color: transparent !important;
+}
+
+.sidebar-heading {
+  padding-left: 30px !important;
+  padding-bottom: 10px !important;
+}
+
+.fw-semibold {
+  font-weight: 600;
+}
+
+.card,
+.modal-content {
+  background-color: var(--light-dark);
+  color: #fff;
+}
+
+
+.btn {
+  background-color: var(--purple) !important;
+  border-color: var(--purple) !important;
+  color: #fff;
+  font-weight: 700;
+  display: flex;
+  font-size: 15px !important;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 14px 24px;
+  border-radius: 999px !important;
+  line-height: 100%;
+}
+
+.btn:hover {
+  background-color: var(--purple-hover) !important;
+}
+
+.btn-danger {
+  border-color: #b80000 !important;
+  background-color: #b80000 !important;
+}
+
+.btn-danger:hover {
+  background-color: #ff4a4a !important;
+}
+
+.form-control {
+  color: #fff !important;
+  border-color: var(--grey);
+}
+
+.form-control::placeholder {
+  color: var(--grey);
+}
+
+.form-control option {
+  color: #20212C !important;
+}
+
+#boardsList li a {
+  cursor: grab;
+}
+
+.tasks {
+  padding: 30px 0;
+  min-height: 300px;
+}
+
+.task,
+.note {
+  background-color: var(--light-dark);
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #2b2c37;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.task:hover,
+.note:hover .task-title,
+.note-title {
+  color: #2470dc;
+}
+
+.task-title,
+.note-title {
+  font-size: 20px;
+  font-weight: 700;
+  transition: 0.3s ease-in-out;
+}
+
+.date-mood {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.task-date {
+  font-size: 12px;
+}
+
+.sortButton {
+  padding: 0 5px;
+  cursor: pointer;
+}
+
+.fc-event {
+  cursor: pointer !important;
+}
+
+.chat-container {
+  height: calc(100vh - 60px);
+  display: flex;
+  flex-direction: column;
+}
+
+.messages {
+  flex-grow: 1;
+  max-height: calc(100vh - 40px);
+  overflow: auto;
+  padding-right: 16px;
+}
+
+.message-form .send-btn {
+  font-size: 18px !important;
+  padding: 10px !important;
+  border-radius: 0 0.25rem 0.25rem 0 !important;
+}
+
+.message-form .message-input {
+  max-height: 40px !important;
+  border-radius: 0.25rem 0 0 0.25rem !important;
+}
+
+.message-input:focus,
+.send-btn:focus {
+  box-shadow: none !important;
+}
+
+.message-header {
+  font-size: 13px;
+  color: #fff;
+}
+
+.message-footer {
+  color: #fff;
+  font-size: 10px;
+}
+
+.message-box {
+  margin: 10px 0;
+  width: 500px;
+  max-width: 100%;
+}
+
+.sender .message-text {
+  background-color: rgb(214, 243, 255);
+  color: #000;
+}
+
+.receiver .message-text {
+  background-color: rgb(218, 255, 214);
+  color: #000;
+}
+
+.message-text {
+  border-radius: 12px;
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
+.sender .message-footer {
+  text-align: right;
+}
+
+.sender.message-box {
+  margin-left: auto;
+}
+
+.receiver.message-box {
+  margin-right: auto;
+}
+
+.new-messages {
+  position: relative;
+}
+
+.new-messages span {
+  position: relative;
+  padding: 5px;
+  background-color: var(--dark);
+  z-index: 1;
+}
+
+.new-messages::after {
+  position: absolute;
+  content: "";
+  height: 1px;
+  background-color: var(--grey);
+  right: 0;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Timer container */
+.timer-container {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  background-color: #fff;
+  padding: 10px 0 10px 10px;
+  border-radius: 20px 0 0 20px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  width: fit-content !important;
+  display: flex;
+  align-items: center;
+  transform: translateX(calc(100% - 60px));
+  transition: transform 0.5s ease-in-out;
+}
+
+.timer-open.timer-container {
+  transform: translateX(0);
+}
+
+/* Timer button */
+.timer-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+/* Timer button icon */
+.timer-icon {
+  font-size: 20px;
+}
+
+/* Timer body */
+.timer-body {
+  padding: 0 10px;
+}
+
+/* Slide animation */
+.slide-left {
+  transform: translateX(-100%);
+}
+
+.timer-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.timer-states {
+  align-items: center;
+  display: flex;
+}
+
+.timer-input {
+  max-width: 60px;
+  border: 0 !important;
+  outline: 0 !important;
+}
+
+#stopState {
+  display: none;
+}
+
+.started #stopState {
+  display: flex;
+}
+
+.started #startState {
+  display: none;
+}
+
+.countdown {
+  font-weight: 600;
+}
+
+.started .timer-button {
+  background-color: #00ce00;
+}
+
+.started .timer-ending {
+  background-color: #b80000;
+}
+
+.note-description a {
+  font-size: 12px;
+}
+
+.event_date_time {
+  font-size: 12px;
+}
+
+.fc-daygrid-dot-event {
+  color: #FFF;
+  background-color: #4ec700;
+  border-color: #4ec700;
+}
+
+.event-event,
+.task-event {
+  padding-left: 4px;
+}
+
+.event-event span,
+.task-event span {
+  font-weight: 700;
+}
