@@ -44,7 +44,7 @@ $(document).ready(function () {
 // Function to scroll #messages div to the bottom
 function scrollMessagesToBottom() {
     var messages = $('#messages');
-    if(messages.length > 0) {
+    if (messages.length > 0) {
         messages.scrollTop(messages[0].scrollHeight);
     }
 }
@@ -74,3 +74,31 @@ function applyLangauge() {
 window.onload = function () {
     applyLangauge();
 };
+
+document.addEventListener("DOMContentLoaded", function () {
+    const isRecurringNo = document.getElementById("isRecurringNo");
+    const isRecurringYes = document.getElementById("isRecurringYes");
+    const recurrenceSec = document.getElementById("recurrence_sec");
+    const recurrencePatternDaily = document.getElementById("recurrencePatternDaily");
+    const recurrenceLimit = document.getElementById("recurrenceLimit");
+
+    // Function to show/hide recurrence section
+    function toggleRecurrenceSection() {
+        if (isRecurringYes.checked) {
+            recurrenceSec.style.display = "block";
+            recurrencePatternDaily.required = true;
+            recurrenceLimit.required = true;
+        } else {
+            recurrenceSec.style.display = "none";
+            recurrencePatternDaily.required = false;
+            recurrenceLimit.required = false;
+        }
+    }
+
+    // Add event listeners to the radio buttons
+    isRecurringNo.addEventListener("change", toggleRecurrenceSection);
+    isRecurringYes.addEventListener("change", toggleRecurrenceSection);
+
+    // Initial call to set the correct state on page load
+    toggleRecurrenceSection();
+});

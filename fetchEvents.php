@@ -26,19 +26,46 @@ if (isset($_SESSION['user_id'])) {
     if ($result->num_rows > 0) {
         // Fetch events data
         while ($row = $result->fetch_assoc()) {
-            // Format event data into FullCalendar event format
-            $startDateTime = $row['event_date'] . 'T' . $row['event_time'];
-            $event = array(
+            // Add the original event to the events array
+            $events[] = array(
                 'id' => $row['event_id'],
                 'title' => $row['event_title'],
-                'start' => $startDateTime, // Combine date and time to create datetime string
+                'start' => $row['event_date'] . 'T' . $row['event_time'],
                 'eventType' => 'event', // Assuming event_type indicates it's an event
-                // You can add more properties like 'end' if you have end dates for events
             );
-            // Add the event to the events array
-            $events[] = $event;
+
+            // Check if the event is recurring
+            if ($row['is_recurring']) {
+                $startDate = new DateTime($row['event_date']); // Get the start date of the event
+                $recurrenceLimit = 5; // Limit the number of occurrences to 5
+                $currentDate = new DateTime(); // Get the current date
+
+                // Loop to generate occurrences based on the recurrence pattern
+                for ($i = 0; $i < $recurrenceLimit; $i++) {
+                    // Apply recurrence pattern based on the value stored in the database
+                    if ($row['recurrence_pattern'] === 'daily') {
+                        $startDate->modify('+1 day');
+                    } elseif ($row['recurrence_pattern'] === 'weekly') {
+                        $startDate->modify('+1 week');
+                    } elseif ($row['recurrence_pattern'] === 'monthly') {
+                        $startDate->modify('+1 month');
+                    }
+
+                    // Check if the occurrence date is in the future
+                    if ($startDate > $currentDate) {
+                        // Add the occurrence to the events array
+                        $events[] = array(
+                            'id' => $row['event_id'],
+                            'title' => $row['event_title'],
+                            'start' => $startDate->format('Y-m-d') . 'T' . $row['event_time'],
+                            'eventType' => 'event', // Assuming event_type indicates it's an event
+                        );
+                    }
+                }
+            }
         }
     }
+
 }
 
 // Convert events array to JSON format

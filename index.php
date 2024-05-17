@@ -12,6 +12,9 @@ if (isset($_POST['add_event']) && isAdmin()) {
     $date = $_POST['event_date'];
     $time = $_POST['event_time'];
     $location = $_POST['event_location'];
+    $isRecurring = $_POST['is_recurring'];
+    $recurrencePattern = $isRecurring == 1 ? $_POST['recurrence_pattern'] : null;
+    $recurrenceLimit = $isRecurring == 1 ? $_POST['recurrence_limit'] : null;
 
     // Check if a file was uploaded
     if (isset($_FILES['event_image']) && $_FILES['event_image']['error'] === UPLOAD_ERR_OK) {
@@ -37,10 +40,10 @@ if (isset($_POST['add_event']) && isAdmin()) {
                 move_uploaded_file($fileTmpName, $uploadPath);
 
                 // Add event with image
-                $checkEvent = addEvent($title, $description, $date, $time, $location, $uploadPath);
+                $checkEvent = addEvent($title, $description, $date, $time, $location, $uploadPath, $isRecurring, $recurrencePattern, $recurrenceLimit);
 
                 if ($checkEvent['success']) {
-                    header('location: ./events.php?added');
+                    header('location: ./index.php?added');
                 } else {
                     $info = '<div class="alert mb-0 py-2 px-3 alert-danger">' . $checkEvent['message'] . '</div>';
                 }
@@ -95,7 +98,7 @@ $page = 'events';
         <!-- Bootstrap core CSS -->
         <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
         <link rel="stylesheet" href="./assets/fontawesome/css/all.css">
-        <link rel="stylesheet" href="./assets/css/style.css?v=1">
+        <link rel="stylesheet" href="./assets/css/style.css?v=2">
     </head>
 
     <body>
@@ -139,7 +142,7 @@ $page = 'events';
                                             if (isAdmin()) {
                                                 ?>
                                                 <a href="?delete_event=<?php echo $event['event_id']; ?>"
-                                                    class="bg-transparent px-2 py-1 btn-danger btn-sm"><i
+                                                    onclick="return confirm('Do you really want to delete this event?');" class="bg-transparent px-2 py-1 btn-danger btn-sm"><i
                                                         class="fa fa-trash"></i></a>
                                                 <?php
                                             }
@@ -151,16 +154,25 @@ $page = 'events';
                                             <span class="d-flex align-items-center gap-2 badge bg-warning text-dark"><i
                                                     class="fa fa-clock"></i><span><?php echo date('h:i a', strtotime($event['event_time'])); ?></span></span>
                                         </div>
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <span class="event_date_time d-flex align-items-center gap-2 mt-1">
+                                        <div class="d-flex align-items-center justify-content-between mt-2">
+                                            <span class="event_date_time d-flex align-items-center gap-2">
                                                 <span class="lang-en">Attendees: </span>
                                                 <span class="lang-de">Teilnehmer: </span>
                                                 <span class="badge bg-success"><?php echo $event['num_attendees']; ?></span>
                                             </span>
-                                            <span class="event_date_time d-flex align-items-center gap-2 mt-1">
-                                                <i class="fa fa-map-pin text-white"></i>
-                                                <span class="badge bg-success"><?php echo $event['event_location']; ?></span>
+                                            <span class="event_date_time d-flex align-items-center gap-2">
+                                                <span class="badge bg-success">
+                                                    <i
+                                                        class="fa fa-map-pin text-white me-1"></i><?php echo $event['event_location']; ?>
+                                                </span>
                                             </span>
+                                            <?php
+                                            if ($event['is_recurring']) {
+                                                ?>
+                                                <span class="d-flex align-items-center text-info recurring"><i class="fa fa-redo me-1"></i> Recurring </span>
+                                                <?php
+                                            }
+                                            ?>
                                         </div>
                                         <img src="./<?php echo $event['event_image']; ?>" class="event_img img-fluid" />
                                         <p class="note-description mb-0 mt-2">
@@ -210,7 +222,8 @@ $page = 'events';
                         </span>
                     </div>
                     <div class="modal-body">
-                        <form class="needs-validation" method="POST" action="" enctype="multipart/form-data" novalidate>
+                        <form class="needs-validation" method="POST" action="index.php" enctype="multipart/form-data"
+                            novalidate>
                             <div class="mb-3">
                                 <label for="eventTitle" class="form-label">
                                     <span class="lang-en">Event Title</span>
@@ -275,7 +288,7 @@ $page = 'events';
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row mb-3">
                                 <div class="col-12">
                                     <label for="eventImage" class="form-label">
                                         <span class="lang-en">Event Image</span>
@@ -286,6 +299,88 @@ $page = 'events';
                                     <div class="invalid-feedback">
                                         <span class="lang-en">Please select an image (PNG, JPEG, JPG).</span>
                                         <span class="lang-de">Bitte wählen Sie ein Bild (PNG, JPEG, JPG) aus.</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label class="form-label">
+                                        <span class="lang-en">Is Recurring?</span>
+                                        <span class="lang-de">Wiederholt sich?</span>
+                                    </label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" checked name="is_recurring"
+                                            id="isRecurringNo" value="0" required>
+                                        <label class="form-check-label" for="isRecurringNo">
+                                            <span class="lang-en">No</span>
+                                            <span class="lang-de">Nein</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="is_recurring"
+                                            id="isRecurringYes" value="1" required>
+                                        <label class="form-check-label" for="isRecurringYes">
+                                            <span class="lang-en">Yes</span>
+                                            <span class="lang-de">Ja</span>
+                                        </label>
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        <span class="lang-en">Please select if the event is recurring.</span>
+                                        <span class="lang-de">Bitte wählen Sie, ob sich die Veranstaltung
+                                            wiederholt.</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="recurrence_sec">
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <label class="form-label">
+                                            <span class="lang-en">Recurrence Pattern</span>
+                                            <span class="lang-de">Wiederholungsmuster</span>
+                                        </label>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="recurrence_pattern"
+                                                id="recurrencePatternDaily" value="daily">
+                                            <label class="form-check-label" for="recurrencePatternDaily">
+                                                <span class="lang-en">Daily</span>
+                                                <span class="lang-de">Täglich</span>
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="recurrence_pattern"
+                                                id="recurrencePatternWeekly" value="weekly">
+                                            <label class="form-check-label" for="recurrencePatternWeekly">
+                                                <span class="lang-en">Weekly</span>
+                                                <span class="lang-de">Wöchentlich</span>
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="recurrence_pattern"
+                                                id="recurrencePatternMonthly" value="monthly">
+                                            <label class="form-check-label" for="recurrencePatternMonthly">
+                                                <span class="lang-en">Monthly</span>
+                                                <span class="lang-de">Monatlich</span>
+                                            </label>
+                                        </div>
+                                        <div class="invalid-feedback">
+                                            <span class="lang-en">Please select a recurrence pattern.</span>
+                                            <span class="lang-de">Bitte wählen Sie ein Wiederholungsmuster.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <label for="recurrenceLimit" class="form-label">
+                                            <span class="lang-en">Recurrence Limit</span>
+                                            <span class="lang-de">Wiederholungslimit</span>
+                                        </label>
+                                        <input type="number" class="form-control bg-transparent" name="recurrence_limit"
+                                            id="recurrenceLimit">
+                                        <div class="invalid-feedback">
+                                            <span class="lang-en">Please enter a valid recurrence limit.</span>
+                                            <span class="lang-de">Bitte geben Sie ein gültiges Wiederholungslimit
+                                                ein.</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -315,7 +410,7 @@ $page = 'events';
                 </div>
             </div>
         </div>
-        <script src="./assets/js/script.js"></script>
+        <script src="./assets/js/script.js?v=2"></script>
         <?php
         include './essentials.php';
         if (isset($_GET['task_id'])) {

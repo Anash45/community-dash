@@ -395,7 +395,7 @@ function getEventById($event_id)
     }
 }
 
-function addEvent($title, $description, $date, $time, $location, $image)
+function addEvent($title, $description, $date, $time, $location, $imagePath, $isRecurring, $recurrencePattern = null, $recurrenceLimit = null)
 {
     global $conn;
 
@@ -422,9 +422,9 @@ function addEvent($title, $description, $date, $time, $location, $image)
         return array('success' => false, 'message' => 'Event with the same details already exists.');
     } else {
         // Insert the event into the database
-        $insert_query = "INSERT INTO events (event_title, event_description, event_date, event_time, event_location, event_image) VALUES (?, ?, ?, ?, ?, ?)";
+        $insert_query = "INSERT INTO events (event_title, event_description, event_date, event_time, event_location, event_image, is_recurring, recurrence_pattern, recurrence_limit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($insert_query);
-        $stmt->bind_param("ssssss", $title, $description, $date, $time, $location, $image);
+        $stmt->bind_param("ssssssiss", $title, $description, $date, $time, $location, $imagePath, $isRecurring, $recurrencePattern, $recurrenceLimit);
         if ($stmt->execute()) {
             // Event added successfully
             return array('success' => true, 'message' => 'Event added successfully.');
@@ -434,6 +434,7 @@ function addEvent($title, $description, $date, $time, $location, $image)
         }
     }
 }
+
 
 
 

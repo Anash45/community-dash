@@ -51,7 +51,7 @@ if (isset($_POST['login'])) {
         <!-- Bootstrap core CSS -->
         <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
         <link rel="stylesheet" href="./assets/fontawesome/css/all.css">
-        <link rel="stylesheet" href="./assets/css/style.css?v=1">
+        <link rel="stylesheet" href="./assets/css/style.css?v=2">
     </head>
 
     <body>
@@ -117,7 +117,7 @@ if (isset($_POST['login'])) {
         <script src="./assets/js/jquery-3.6.1.min.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
         <script src="./assets/js/bootstrap.bundle.min.js"></script>
-        <script src="./assets/js/script.js"></script>
+        <script src="./assets/js/script.js?v=2"></script>
     </body>
 
 </html>

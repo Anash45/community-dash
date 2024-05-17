@@ -37,7 +37,7 @@ $page = 'events';
         <!-- Bootstrap core CSS -->
         <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
         <link rel="stylesheet" href="./assets/fontawesome/css/all.css">
-        <link rel="stylesheet" href="./assets/css/style.css?v=1">
+        <link rel="stylesheet" href="./assets/css/style.css?v=2">
     </head>
 
     <body>
@@ -116,9 +116,28 @@ $page = 'events';
                                             class="fa fa-clock"></i><span><?php echo date('h:i a', strtotime($event['event_time'])); ?></span></span>
                                 </div>
                                 <span class="event_date_time d-flex align-items-center gap-2 mt-3">
-                                    
-                                    <span class="badge bg-info text-dark"><i class="fa fa-map-pin me-2"></i><?php echo $event['event_location']; ?></span>
+                                    <span class="badge bg-info text-dark"><i
+                                            class="fa fa-map-pin me-2"></i><?php echo $event['event_location']; ?></span>
                                 </span>
+                                <?php
+                                if ($event['is_recurring']) {
+                                    $recurrenceDetails = '';
+                                    $recurrenceLimit1 = $event['recurrence_limit'];
+                                    if ($event['recurrence_pattern'] === 'daily') {
+                                        $recurrenceDetails = 'for '.$recurrenceLimit1.' days';
+                                    } elseif ($event['recurrence_pattern'] === 'weekly') {
+                                        $recurrenceDetails = 'for the same day of the '.$recurrenceLimit1.' weeks';
+                                    } elseif ($event['recurrence_pattern'] === 'monthly') {
+                                        $recurrenceDetails = 'for the same date of '.$recurrenceLimit1.' months';
+                                    }
+                                    ?>
+                                    <div class="d-flex gap-2 align-items-center text-info recurring mt-2">
+                                        <div><i class="fa fa-redo me-1"></i> <span class="fw-bold">Recurring</span> </div>
+                                        <p class="mb-0"><?php echo $recurrenceDetails; ?></p>
+                                    </div>
+                                    <?php
+                                }
+                                ?>
                                 <div class="row mt-3">
                                     <div class="col-lg-5 col-md-6 col-12 mb-md-0 mb-3">
                                         <img src="./<?php echo $event['event_image']; ?>" class="event_img img-fluid" />
@@ -172,7 +191,7 @@ $page = 'events';
         <script src="./assets/js/jquery-3.6.1.min.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
         <script src="./assets/js/bootstrap.bundle.min.js"></script>
-        <script src="./assets/js/script.js"></script>
+        <script src="./assets/js/script.js?v=2"></script>
         <?php
         include './essentials.php';
         ?>

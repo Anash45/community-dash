@@ -494,7 +494,7 @@ main {
 }
 
 .event_date_time {
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .fc-daygrid-dot-event {
@@ -590,36 +590,46 @@ main {
 .lang-de {
   display: none !important;
 }
-.flag-icon{
+
+.flag-icon {
   height: 20px;
   width: 20px;
   border-radius: 100px;
   object-fit: cover;
 }
 
-.de .lang-de{
+.de .lang-de {
   display: inline !important;
 }
-.de .lang-en{
+
+.de .lang-en {
   display: none !important;
 }
 
-.form-select option{
+.form-select option {
   color: #000 !important;
   background-color: rgb(247, 253, 255) !important;
 }
 
-.event_img{
+.event_img {
   border-radius: 16px;
   width: 100%;
   display: block;
   margin: 0 auto;
 }
-.note .event_img{
+
+.note .event_img {
   margin-top: 10px;
   height: 200px;
   object-fit: cover;
   overflow: hidden;
+}
+
+#recurrence_sec {
+  display: none;
+}
+.recurring{
+  font-size: 14px !important;
 }
 @media (max-width: 768px) {
   #sidebarMenu {
