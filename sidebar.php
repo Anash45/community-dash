@@ -1,9 +1,15 @@
 <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
     <div class="position-sticky pt-3">
-        <h5 class="text-white fw-bold mx-auto w-100 text-center my-3 d-md-none d-block">
-            <span class="lang-en">Hi, <?php echo $_SESSION['name']; ?></span>
-            <span class="lang-de">Hallo, <?php echo $_SESSION['name']; ?></span>
-        </h5>
+        <?php
+        if (isLoggedIn()) {
+            ?>
+            <h5 class="text-white fw-bold mx-auto w-100 text-center my-3 d-md-none d-block">
+                <span class="lang-en">Hi, <?php echo $_SESSION['name']; ?></span>
+                <span class="lang-de">Hallo, <?php echo $_SESSION['name']; ?></span>
+            </h5>
+            <?php
+        }
+        ?>
         <ul class="nav flex-column">
             <li class="nav-item">
                 <a board-order="<?php echo $board['board_order']; ?>"
@@ -62,10 +68,23 @@
                 </div>
             </div>
             <div class="nav-item text-nowrap">
-                <a class="nav-link px-3" href="./logout.php">
-                    <span class="lang-en">Logout</span>
-                    <span class="lang-de">Ausloggen</span>
-                </a>
+                <?php
+                if (isLoggedIn()) {
+                    ?>
+                    <a class="nav-link px-3" href="./logout.php">
+                        <span class="lang-en">Logout</span>
+                        <span class="lang-de">Ausloggen</span>
+                    </a>
+                    <?php
+                } else {
+                    ?>
+                    <a class="nav-link px-3" href="./login.php">
+                        <span class="lang-en">Login</span>
+                        <span class="lang-de">Anmelden</span>
+                    </a>
+                    <?php
+                }
+                ?>
             </div>
         </div>
     </div>

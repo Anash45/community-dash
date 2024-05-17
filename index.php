@@ -2,9 +2,9 @@
 require_once './db_conn.php';
 require './functions.php';
 
-if (!isLoggedIn()) {
-    header('location: login.php');
-}
+// if (!isLoggedIn()) {
+//     header('location: login.php');
+// }
 $info = '';
 if (isset($_POST['add_event']) && isAdmin()) {
     $title = $_POST['event_title'];
@@ -12,6 +12,7 @@ if (isset($_POST['add_event']) && isAdmin()) {
     $date = $_POST['event_date'];
     $time = $_POST['event_time'];
     $location = $_POST['event_location'];
+    $language = $_POST['event_language'];
     $isRecurring = $_POST['is_recurring'];
     $recurrencePattern = $isRecurring == 1 ? $_POST['recurrence_pattern'] : null;
     $recurrenceLimit = $isRecurring == 1 ? $_POST['recurrence_limit'] : null;
@@ -40,7 +41,7 @@ if (isset($_POST['add_event']) && isAdmin()) {
                 move_uploaded_file($fileTmpName, $uploadPath);
 
                 // Add event with image
-                $checkEvent = addEvent($title, $description, $date, $time, $location, $uploadPath, $isRecurring, $recurrencePattern, $recurrenceLimit);
+                $checkEvent = addEvent($title, $description, $date, $time, $location, $language, $uploadPath, $isRecurring, $recurrencePattern, $recurrenceLimit);
 
                 if ($checkEvent['success']) {
                     header('location: ./index.php?added');
@@ -107,8 +108,9 @@ $page = 'events';
             <div class="row">
                 <?php include './sidebar.php'; ?>
                 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <h1 class="section-title pt-3 fw-bold text-center text-white">
+                    <div
+                        class="d-flex align-items-center pt-3 mb-1 justify-content-between gap-2 flex-sm-wrap flex-wrap">
+                        <h1 class="section-title fw-bold text-center mb-0 text-white">
                             <span class="lang-en">Events</span>
                             <span class="lang-de">Veranstaltungen</span>
                         </h1>
@@ -123,6 +125,13 @@ $page = 'events';
                         }
                         ?>
                     </div>
+                    <div class="d-flex justify-content-start mt-3 mb-1">
+                        <select name="orderByDate" class="form-select bg-transparent text-white w-fit"
+                            onchange="window.location = 'index.php?orderByDate='+this.value;">
+                            <option value="asc" <?php echo isset($_GET['orderByDate']) && $_GET['orderByDate'] == 'asc' ? 'selected' : ''; ?>>Ascending</option>
+                            <option value="desc" <?php echo isset($_GET['orderByDate']) && $_GET['orderByDate'] == 'desc' ? 'selected' : ''; ?>>Descending</option>
+                        </select>
+                    </div>
                     <?php echo $info; ?>
                     <div class="row py-5">
                         <?php
@@ -132,7 +141,7 @@ $page = 'events';
 
                             foreach ($events as $event) {
                                 ?>
-                                <div class="col-md-4 mb-md-0 mb-3">
+                                <div class="col-lg-4 col-sm-6 col-12 mb-4 <?php echo $event['language']; ?>-event">
                                     <div class="note h-100">
                                         <div class="d-flex align-items-center justify-content-between mb-2">
                                             <span class="note-title">
@@ -142,7 +151,8 @@ $page = 'events';
                                             if (isAdmin()) {
                                                 ?>
                                                 <a href="?delete_event=<?php echo $event['event_id']; ?>"
-                                                    onclick="return confirm('Do you really want to delete this event?');" class="bg-transparent px-2 py-1 btn-danger btn-sm"><i
+                                                    onclick="return confirm('Do you really want to delete this event?');"
+                                                    class="bg-transparent px-2 py-1 btn-danger btn-sm"><i
                                                         class="fa fa-trash"></i></a>
                                                 <?php
                                             }
@@ -169,7 +179,9 @@ $page = 'events';
                                             <?php
                                             if ($event['is_recurring']) {
                                                 ?>
-                                                <span class="d-flex align-items-center text-info recurring"><i class="fa fa-redo me-1"></i> Recurring </span>
+                                                <span class="d-flex align-items-center text-info recurring"><i
+                                                        class="fa fa-redo me-1"></i> <span class="lang-en">Recurring</span><span
+                                                        class="lang-de">Wiederkehrend</span> </span>
                                                 <?php
                                             }
                                             ?>
@@ -181,7 +193,7 @@ $page = 'events';
                                                 // Shorten the content to 50 characters
                                                 $shortContent = substr($event['event_description'], 0, 50);
                                                 // Add the "Read more" link
-                                                echo '<span class="pe-2">' . $shortContent . '...</span>' . ' <a href="#" class="text-white" onclick="openContentModal(`' . htmlspecialchars(nl2br($event['event_description'])) . '`)"><span class="lang-en">Read more</span><span class="lang-de">Mehr lesen</span>
+                                                echo '<span class="pe-2">' . $shortContent . '...</span>' . ' <a href="eventDetails.php?event_id='.$event['event_id'].'" class="text-white" onclick="openContentModal(`' . htmlspecialchars(nl2br($event['event_description'])) . '`)"><span class="lang-en">Read more</span><span class="lang-de">Mehr lesen</span>
                                                 </a>';
                                             } else {
                                                 // If the content is less than or equal to 50 characters, just display it
@@ -231,6 +243,21 @@ $page = 'events';
                                 </label>
                                 <input type="text" class="form-control bg-transparent" name="event_title"
                                     id="eventTitle" required>
+                                <div class="invalid-feedback">
+                                    <span class="lang-en">Please enter an event title.</span>
+                                    <span class="lang-de">Bitte geben Sie einen Veranstaltungstitel ein.</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="eventTitle" class="form-label">
+                                    <span class="lang-en">Language</span>
+                                    <span class="lang-de">Language</span>
+                                </label>
+                                <select class="form-control bg-transparent" name="event_language" id="eventLanguage"
+                                    required>
+                                    <option value="en">English</option>
+                                    <option value="de">German</option>
+                                </select>
                                 <div class="invalid-feedback">
                                     <span class="lang-en">Please enter an event title.</span>
                                     <span class="lang-de">Bitte geben Sie einen Veranstaltungstitel ein.</span>

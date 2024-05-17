@@ -605,7 +605,20 @@ main {
 .de .lang-en {
   display: none !important;
 }
+.de-event {
+  display: none !important;
+}
 
+.de .en-event {
+  display: none !important;
+}
+
+.de .de-event {
+  display: block !important;
+}
+.w-fit{
+  width: fit-content;
+}
 .form-select option {
   color: #000 !important;
   background-color: rgb(247, 253, 255) !important;

@@ -102,3 +102,24 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initial call to set the correct state on page load
     toggleRecurrenceSection();
 });
+
+
+function imageDisplay(e) {
+    const fileInput = e.target;
+    const file = fileInput.files[0];
+    const imageDisplay = document.getElementById('event_image_display');
+
+    if (file) {
+        const reader = new FileReader();
+
+        reader.onload = function (event) {
+            imageDisplay.src = event.target.result;
+            imageDisplay.style.display = 'block'; // Show the image element
+        };
+
+        reader.readAsDataURL(file);
+    } else {
+        imageDisplay.src = '';
+        imageDisplay.style.display = 'none'; // Hide the image element if no file is selected
+    }
+}

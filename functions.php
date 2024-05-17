@@ -346,14 +346,23 @@ function getAllEvents()
 {
     global $conn;
 
-    // Prepare and execute query to fetch all events for the user with the number of attendees
+    // Assume $orderByDate is provided as a parameter and is either 'asc' or 'desc'
+    $orderByDate = isset($_GET['orderByDate']) ? $_GET['orderByDate'] : 'asc'; // Default to 'asc' if not provided
+
+    // Sanitize $orderByDate to ensure it's either 'asc' or 'desc'
+    $orderByDate = strtolower($orderByDate);
+    if ($orderByDate !== 'asc' && $orderByDate !== 'desc') {
+        $orderByDate = 'asc';
+    }
+
+    // Prepare and execute query to fetch 8 events for the user with the number of attendees
     $query = "
-        SELECT e.*, COUNT(a.attendee_id) AS num_attendees
-        FROM events e
-        LEFT JOIN attendees a ON e.event_id = a.event_id
-        GROUP BY e.event_id
-        ORDER BY e.event_id DESC
-    ";
+    SELECT e.*, COUNT(a.attendee_id) AS num_attendees
+    FROM events e
+    LEFT JOIN attendees a ON e.event_id = a.event_id
+    GROUP BY e.event_id
+    ORDER BY e.event_date $orderByDate, e.event_time $orderByDate
+";
     $stmt = $conn->prepare($query);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -373,8 +382,13 @@ function getEventById($event_id)
 {
     global $conn;
 
-    // Get the user_id from the session
-    $user_id = $_SESSION['user_id'];
+    if (isLoggedIn()) {
+
+        // Get the user_id from the session
+        $user_id = $_SESSION['user_id'];
+    }else{
+        $user_id = -1;
+    }
 
     // Prepare and execute query to fetch the event by its ID
     $query = "SELECT *, 
@@ -395,7 +409,7 @@ function getEventById($event_id)
     }
 }
 
-function addEvent($title, $description, $date, $time, $location, $imagePath, $isRecurring, $recurrencePattern = null, $recurrenceLimit = null)
+function addEvent($title, $description, $date, $time, $location, $language, $imagePath, $isRecurring, $recurrencePattern = null, $recurrenceLimit = null)
 {
     global $conn;
 
@@ -422,9 +436,9 @@ function addEvent($title, $description, $date, $time, $location, $imagePath, $is
         return array('success' => false, 'message' => 'Event with the same details already exists.');
     } else {
         // Insert the event into the database
-        $insert_query = "INSERT INTO events (event_title, event_description, event_date, event_time, event_location, event_image, is_recurring, recurrence_pattern, recurrence_limit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $insert_query = "INSERT INTO events (event_title, event_description, event_date, event_time, event_location, `language`, event_image, is_recurring, recurrence_pattern, recurrence_limit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($insert_query);
-        $stmt->bind_param("ssssssiss", $title, $description, $date, $time, $location, $imagePath, $isRecurring, $recurrencePattern, $recurrenceLimit);
+        $stmt->bind_param("sssssssiss", $title, $description, $date, $time, $location, $language, $imagePath, $isRecurring, $recurrencePattern, $recurrenceLimit);
         if ($stmt->execute()) {
             // Event added successfully
             return array('success' => true, 'message' => 'Event added successfully.');
@@ -434,7 +448,33 @@ function addEvent($title, $description, $date, $time, $location, $imagePath, $is
         }
     }
 }
+function updateEvent($event_id, $event_title, $event_language, $event_description, $event_date, $event_time, $event_location, $event_image, $is_recurring, $recurrence_pattern, $recurrence_limit)
+{
+    global $conn;
 
+    $query = "UPDATE events SET event_title = ?, language = ?, event_description = ?, event_date = ?, event_time = ?, event_location = ?, is_recurring = ?, recurrence_pattern = ?, recurrence_limit = ?";
+
+    if ($event_image !== null) {
+        $query .= ", event_image = ?";
+    }
+
+    $query .= " WHERE event_id = ?";
+
+    if ($stmt = $conn->prepare($query)) {
+        if ($event_image !== null) {
+            $stmt->bind_param("ssssssisssi", $event_title, $event_language, $event_description, $event_date, $event_time, $event_location, $is_recurring, $recurrence_pattern, $recurrence_limit, $event_image, $event_id);
+        } else {
+            $stmt->bind_param("ssssssissi", $event_title, $event_language, $event_description, $event_date, $event_time, $event_location, $is_recurring, $recurrence_pattern, $recurrence_limit, $event_id);
+        }
+        if ($stmt->execute()) {
+            return array('success' => true, 'message' => 'Event updated successfully.');
+        } else {
+            return array('success' => false, 'message' => 'Error updating event: ' . $stmt->error);
+        }
+    } else {
+        return array('success' => false, 'message' => 'Error preparing statement: ' . $conn->error);
+    }
+}
 
 
 
