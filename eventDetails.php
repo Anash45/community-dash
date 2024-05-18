@@ -19,7 +19,7 @@ if (isset($_GET['event_id'])) {
                 header('refresh:3,url=eventDetails.php?event_id=' . $event_id);
             }
         } else {
-            header('location=login.php');
+            header('location:login.php');
         }
     }
 
