@@ -19,8 +19,7 @@ if (isset($_GET['event_id'])) {
                 header('refresh:3,url=eventDetails.php?event_id=' . $event_id);
             }
         } else {
-            $info = '<div class="alert alert-danger" role="alert">Login first!</div>';
-            header('refresh:3,url=eventDetails.php?event_id=' . $event_id);
+            header('location=login.php');
         }
     }
 
